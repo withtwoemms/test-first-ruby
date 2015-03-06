@@ -1,5 +1,4 @@
 module NumbersInWords
-#TODO: REFACTOR!!
 
     TO_WORDS = {0=>"",1=>"one",2=>"two",3=>"three",4=>"four",5=>"five",6=>"six",7=>"seven",8=>"eight",9=>"nine",10=>"ten",11=>"eleven",12=>"twelve",13=>"thirteen",14=>"fourteen",15=>"fifteen",16=>"sixteen",17=>"seventeen",18=>"eighteen",19=>"nineteen",20=>"twenty",30=>"thirty",40=>"forty",50=>"fifty",60=>"sixty",70=>"seventy",80=>"eighty",90=>"ninety"}
 
@@ -51,7 +50,7 @@ module NumbersInWords
             else
                 num_tens = num / 10 * 10
                 num_ones = num % 10
-                return "#{tens(num_tens)} #{ones(num_ones)}" 
+                return "#{tens(num_tens)} #{ones(num_ones)}" #"#{num_tens} #{num_ones}"
             end 
         else
             raise "Fixnum out of TENS range"
@@ -83,8 +82,10 @@ module NumbersInWords
 
         place_flag = 0
         while num_array.length > 0
+            p num_array
             chunk = num_array.pop(3).join.to_i
             if place_flag == 0
+                p [chunk, place_flag]
                 case chunk
                 when ONES
                     num_word.unshift(ones(chunk))
@@ -94,20 +95,34 @@ module NumbersInWords
                     num_word.unshift(hundreds(chunk))
                 end
             elsif place_flag == 1
-                thousands = chunk
+                p [chunk, place_flag]
+                thousands = chunk#.join.to_i
+                p thousands
                 case thousands
                 when ONES
+                    p [ones(thousands), "one thou"]
                     num_word.unshift("#{ones(thousands)} #{POWERS_OF_TEN[3]}")
                 when TENS
                     num_word.unshift("#{tens(thousands)} #{POWERS_OF_TEN[3]}")
                 when HUNDREDS
-                    num_word.unshift("#{hundreds(thousands)} #{POWERS_OF_TEN[3]}")
+                num_word.unshift("#{hundreds(thousands)} #{POWERS_OF_TEN[3]}")
                 end
             end
             place_flag += 1
         end
         
         return num_word.join(" ").strip
+=begin 
+        if THOUSANDS.include?(num)
+            num_thousands = num / 1000
+            num_hundreds = num - num_thousands * 1000
+            num_tens = num_hundreds - 100
+            num_ones = num % 10
+            return "#{} #{POWERS_OF_TEN[3]}"
+        else
+            raise "Fixnum out of THOUSANDS range"
+        end
+=end
     end
     
     def millions(num)
@@ -116,29 +131,45 @@ module NumbersInWords
 
         place_flag = 0
         while num_array.length != 0
+            p num_array
             chunk = num_array.pop(3).join.to_i
             if place_flag == 0
+                p chunk
                 case chunk
                 when ONES
                     num_word.unshift(ones(chunk))
                 when TENS
+                    p "#{chunk} huns"
                     num_word.unshift(tens(chunk))
                 when HUNDREDS
+                    p "#{chunk} huns"
                     num_word.unshift(hundreds(chunk))
                 end
             elsif place_flag == 1 && chunk != 0
+                p chunk
                 case chunk
                 when ONES
                     num_word.unshift("#{ones(chunk)} #{POWERS_OF_TEN[3]}")
                 when TENS
+                    p "#{chunk} huns"
                     num_word.unshift("#{tens(chunk)} #{POWERS_OF_TEN[3]}")
                 when HUNDREDS
+                    p "#{chunk} huns"
                     num_word.unshift("#{hundreds(chunk)} #{POWERS_OF_TEN[3]}")
                 end
+=begin
+                p chunk
+                chunk *= 1000
+                p thousands(chunk)
+                num_word.unshift(thousands(chunk)) unless chunk == 0 
+=end
             elsif place_flag == 2
-                millions = chunk
+                p chunk
+                #chunk *= 1000
+                millions = chunk#num_array.join.to_i
                 case millions
                 when ONES
+                    p "one mil"
                     num_word.unshift("#{ones(millions)} #{POWERS_OF_TEN[6]}")
                 when TENS
                     num_word.unshift("#{tens(millions)} #{POWERS_OF_TEN[6]}")
@@ -159,27 +190,36 @@ module NumbersInWords
 
         place_flag = 0
         while num_array.length != 0
+            p num_array
             chunk = num_array.pop(3).join.to_i
             if place_flag == 0
+                p chunk
                 case chunk
                 when ONES
                     num_word.unshift(ones(chunk))
                 when TENS
+                    p "#{chunk} huns"
                     num_word.unshift(tens(chunk))
                 when HUNDREDS
+                    p "#{chunk} huns"
                     num_word.unshift(hundreds(chunk))
                 end
             elsif place_flag == 1
+                p chunk
                 case chunk
                 when ONES
                     num_word.unshift("#{ones(chunk)} #{POWERS_OF_TEN[3]}")
                 when TENS
+                    p "#{chunk} huns"
                     num_word.unshift("#{tens(chunk)} #{POWERS_OF_TEN[3]}")
                 when HUNDREDS
+                    p "#{chunk} huns"
                     num_word.unshift("#{hundreds(chunk)} #{POWERS_OF_TEN[3]}")
                 end
             elsif place_flag == 2
-                millions = chunk
+                p chunk
+                #chunk *= 1000
+                millions = chunk#num_array.join.to_i
                 case millions
                 when ONES
                     p "one mil"
@@ -190,13 +230,18 @@ module NumbersInWords
                     num_word.unshift("#{hundreds(millions)} #{POWERS_OF_TEN[6]}")
                 end
             elsif place_flag == 3
-                billions = chunk
+                p chunk
+                #chunk *= 1000
+                billions = chunk#num_array.join.to_i
                 case billions
                 when ONES
+                    p "one bil"
                     num_word.unshift("#{ones(billions)} #{POWERS_OF_TEN[9]}")
                 when TENS
+                    p "ten bil"
                     num_word.unshift("#{tens(billions)} #{POWERS_OF_TEN[9]}")
                 when HUNDREDS
+                    p "hun bil"
                     num_word.unshift("#{hundreds(billions)} #{POWERS_OF_TEN[9]}")
                 end
             end
@@ -212,29 +257,39 @@ module NumbersInWords
 
         place_flag = 0
         while num_array.length != 0
+            p num_array
             chunk = num_array.pop(3).join.to_i
             if place_flag == 0
+                p chunk
                 case chunk
                 when ONES
                     num_word.unshift(ones(chunk))
                 when TENS
+                    p "#{chunk} huns"
                     num_word.unshift(tens(chunk))
                 when HUNDREDS
+                    p "#{chunk} huns"
                     num_word.unshift(hundreds(chunk))
                 end
             elsif place_flag == 1 && chunk != 0
+                p chunk
                 case chunk
                 when ONES
                     num_word.unshift("#{ones(chunk)} #{POWERS_OF_TEN[3]}")
                 when TENS
+                    p "#{chunk} huns"
                     num_word.unshift("#{tens(chunk)} #{POWERS_OF_TEN[3]}")
                 when HUNDREDS
+                    p "#{chunk} huns"
                     num_word.unshift("#{hundreds(chunk)} #{POWERS_OF_TEN[3]}")
                 end
             elsif place_flag == 2 && chunk != 0
-                millions = chunk
+                p chunk
+                #chunk *= 1000
+                millions = chunk#num_array.join.to_i
                 case millions
                 when ONES
+                    p "one mil"
                     num_word.unshift("#{ones(millions)} #{POWERS_OF_TEN[6]}")
                 when TENS
                     num_word.unshift("#{tens(millions)} #{POWERS_OF_TEN[6]}")
@@ -242,23 +297,33 @@ module NumbersInWords
                     num_word.unshift("#{hundreds(millions)} #{POWERS_OF_TEN[6]}")
                 end
             elsif place_flag == 3 && chunk != 0
-                billions = chunk
+                p chunk
+                #chunk *= 1000
+                billions = chunk#num_array.join.to_i
                 case billions
                 when ONES
+                    p "one bil"
                     num_word.unshift("#{ones(billions)} #{POWERS_OF_TEN[9]}")
                 when TENS
+                    p "ten bil"
                     num_word.unshift("#{tens(billions)} #{POWERS_OF_TEN[9]}")
                 when HUNDREDS
+                    p "hun bil"
                     num_word.unshift("#{hundreds(billions)} #{POWERS_OF_TEN[9]}")
                 end
             elsif place_flag == 4 && chunk != 0
-                trillions = chunk
+                p chunk
+                #chunk *= 1000
+                trillions = chunk#num_array.join.to_i
                 case trillions
                 when ONES
+                    p "one tril"
                     num_word.unshift("#{ones(trillions)} #{POWERS_OF_TEN[12]}")
                 when TENS
+                    p "ten tril"
                     num_word.unshift("#{tens(trillions)} #{POWERS_OF_TEN[12]}")
                 when HUNDREDS
+                    p "hun tril"
                     num_word.unshift("#{hundreds(trillions)} #{POWERS_OF_TEN[12]}")
                 end
             end

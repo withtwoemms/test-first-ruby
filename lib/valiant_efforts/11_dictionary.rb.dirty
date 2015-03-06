@@ -1,0 +1,155 @@
+class Dictionary
+  # TODO: your code goes here!
+
+    attr_reader :entries, :keywords
+
+    def initialize
+        @entries = {}#'fissure'=>'a long, narrow opening', 'fish'=>'an aquatic animal'}
+    end
+
+    def entries
+        @entries ||= {} 
+    end
+
+    def printable
+        print_out = []
+        i = 0
+        while i < @entries.length
+            print_out << "[#{self.keywords[i]}] \"#{@entries[self.keywords[i]]}\""
+            i += 1
+        end
+        return print_out.join("\n")
+
+#        i = 0
+#        while i < @entries.length
+#            if @entries[self.keywords[i]].class == NilClass
+#                #puts @entries[self.keywords[i]].class
+#                @entries[self.keywords[i]] = @entries.values[i+1]
+#            end
+#                print_out << "[#{self.keywords[i]}] \"#{@entries[self.keywords[i]].class}\""
+#            i += 1
+#        end
+#        return print_out.join("\n")
+    end
+
+    def clear_all_entries
+        @entries = {}
+    end
+
+    def keywords
+        return self.entries.keys.sort
+=begin
+        keys = self.entries.keys
+        i = 0
+        while i < keys.length
+            if keys[i].class == Hash
+                keys[i] = keys[i].keys[0]
+            end
+            i += 1
+        end
+        return keys.sort
+=end
+=begin
+        keys = self.entries.keys
+        keywords = []
+        keys.each{|word|
+            if word.inspect == String
+                keywords << word
+            elsif word.inspect == Hash
+                keywords << word.keys
+            end            
+        }
+
+        return keywords
+=end
+    end
+
+    def add(word_definition)
+        case word_definition
+            when Hash then @entries.merge!(word_definition)
+            when String then @entries[word_definition] = nil
+        end
+
+=begin
+        #if only ONE word passed, assign 'definition' to 'nil'
+        if word_definition.to_s.split(/\s/).length == 1
+            word = word_definition
+            @entries[word] = nil
+        elsif word_definition.to_s.split(/\s/).length > 1
+            @entries.merge!(word_definition)
+        end
+=end
+=begin 
+    def add word, definition = nil
+        if word.class == Hash
+            @entries.merge!(word)
+        else
+            @entries[word] = definition
+        end
+=end
+=begin
+        word_definition.each{|word, definition|
+            @entries[word] = definition
+        }
+=end
+    end
+
+    def include?(word)
+        if @entries.keys.include?(word)
+            return true
+        else
+            return false
+        end
+    end
+
+    
+            #matched.push  @entries.select{|word, definition|
+            #    word == pattern
+            #}
+
+    def find(pattern)
+        regx = Regexp.new(pattern)
+
+            found = self.entries.select{|word|
+                word =~ regx
+            } 
+            return found
+=begin
+        if @entries.keys.include?(pattern) #if word in dictionary
+            #found = @entries.keys.each{|word|
+            #    word.match(regx)
+            #}
+            found = self.entries.select{|word|
+                word.match(regx)
+            }
+            return found
+    =begin
+        matched = {}
+        i = 0
+        while i < found.length
+            matched[@entries.keys[i]] = @entries[found[i]]    
+            i += 1
+        end
+        return found
+    =end
+    =begin
+            @entries.select{|word, definition|
+                word == pattern
+            }
+    =end
+        else
+            return {}
+        end
+=end
+=begin
+        if @entries.include?(pattern)
+            #@entries.assoc(word) 
+            @entries.select{|key, hash| hash["#{pattern}"] == }#/#{pattern}/ =~ w}
+        else
+            return {}
+        end 
+=end
+    end
+
+    puts self.class.to_s + " has been loaded..."
+end

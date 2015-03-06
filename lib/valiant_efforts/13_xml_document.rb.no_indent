@@ -1,0 +1,46 @@
+class XmlDocument
+# TODO: Features I'd like to implement
+#   > allow for multiple tag entries when nesting
+#   > turn attributes to strings before insertion
+
+
+    def initialize(indent=false)
+    end
+
+    def send(tag)
+        return "<#{tag}/>"
+    end
+
+    def render_tag(tag_name, attrs={}, &block)
+        #***STRING-IFY ATTRIBUTE HASH***
+        # ??? is attrs an array of hashes?
+        #   > NO. It's a hash with * number of entries
+        # ??? do hashes have the method "map"?
+        #   > YES. "Map" is an alias for "collect" both ~~> arrays
+
+        attrs_str = attrs.map{|k, v|
+            "#{k}='#{v}'"
+        }.join(" ")
+
+        if block
+            content = yield
+            attrs == {} ? "<#{tag_name}>#{content}</#{tag_name}>" : 
+                "<#{tag_name} #{attrs_str}>#{content}</#{tag_name}>"
+        else
+            attrs == {} ? send(tag_name) : "<#{tag_name} #{attrs_str}/>"
+        end
+    end
+    
+    def method_missing(method_name, *args, &block)
+        render_tag(method_name, *args, &block)
+    end
+
+    puts self.inspect + " class has been loaded..."
+end
+
+#xml = XmlDocument.new(true)
+#print xml.hello{"world!"}
+#print "\n"
+#print xml.hello{xml.goodbye{"world!"}}
+#print "\n"
+#print xml.hello{xml.goodbye{xml.come_back{xml.ok_fine(:be=>"that_way")}}}

@@ -1,10 +1,7 @@
 class XmlDocument
-=begin
-TODO: Features I'd like to implement
-    [X] allow for multiple tag entries when nesting
-    [X] turn attributes to strings before insertion
-    [O] make indentation work for strings passed to block
-=end
+# TODO: Features I'd like to implement
+#   > allow for multiple tag entries when nesting
+#   > turn attributes to strings before insertion
 
     attr_accessor :indents, :indent_depth
 
@@ -13,7 +10,6 @@ TODO: Features I'd like to implement
         self.indent_depth = 0
     end
 
-    # not useful for rspec tests
     def send(tag)
         return "<#{tag}/>"
     end
@@ -38,15 +34,19 @@ TODO: Features I'd like to implement
             xml_out << "<#{tag_name} #{attrs_str}"
 
         if block
-            self.indent_depth += 2 
+            self.indent_depth += 2 #if self.indents
             xml_out << ">"
             xml_out << "\n" if self.indents
 
+            #content = yield # recursion point
             xml_out << yield
-            self.indent_depth -= 2 
+            #self.indents ? 
+            #    xml_out << (" " * indent_depth) + content : #+ "\n":
+            #    xml_out << content
+            self.indent_depth -= 2 #if self.indents
 
             xml_out << (" " * self.indent_depth) if self.indents
-            xml_out << "</#{tag_name}>"
+            xml_out << "</#{tag_name}>" #+ (self.indents ? "\n" : "")
             xml_out << "\n" if self.indents
 
         else
@@ -54,6 +54,7 @@ TODO: Features I'd like to implement
             xml_out << "\n" if self.indents            
         end
         return xml_out
+        #xml_out
     end
     
     def method_missing(method_name, *args, &block)

@@ -1,0 +1,84 @@
+def reverser
+    #(yield).split(/\b/).map(&:reverse).join # --> WORKS!
+    
+    result = yield.split(/\b/).map{|word| word.reverse}.join
+
+=begin
+    result = yield
+
+    if result.split(" ").length > 1 
+        result.split(" ").map {|element|
+            element.reverse#map {|word| word.reverse}.join(" ")
+        }
+    elsif result.split(" ").length == 1
+        result.split(" ").map {|word| word.reverse}.join(" ")
+    end
+=end
+    return result
+end
+
+reverser {"hello"}
+reverser {
+    %{hello dolly}
+}
+
+=begin ATTEMPTS: NO BLOCKS --> BLOCKS
+def reverser(str)
+    str = str.split(" ")
+    reversed = []
+
+    if str.length == 1 # one-word input         
+        word = str[0].split("")
+        word.each {|letter|
+            reversed.unshift(letter)
+        }
+    =begin
+        char_idx = 0
+        while char_idx < word.length
+            reversed.unshift(word[char_idx])
+            char_idx += 1
+    =end
+    elsif str.length > 1 # more than one-word input
+        str.each {|word|
+            sub_array = []
+            word = word.split("")
+            word.each {|letter|
+                sub_array.unshift(letter)
+            }
+            reversed.unshift(sub_array.join(""))
+        }
+        result = reversed.join(" ")
+    =begin
+        word_idx = 0
+        while word_idx < str.length
+            word = str[word_idx]
+            char_idx = 0
+            while char_idx < word.length
+                reversed.unshift(word[char_idx])
+                char_idx += 1
+            end
+            reversed.unshift(" ")
+            word_idx += 1
+        end
+    =end
+    end
+
+    return result
+
+end
+=end
+
+def adder(*num)
+    if num
+
+    else
+
+    end
+end
+
+def repeater
+
+end
+
+#reverser("hello")
+#p(reverser("hello world"))

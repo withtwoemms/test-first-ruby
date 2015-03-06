@@ -1,0 +1,74 @@
+class Fixnum
+  
+    attr_reader :zero_to_nine, :ten_to_twelve
+
+=begin ---DOES NOT WORK!---
+    def initialize
+        @num_words = ["zero","one","two","three","four","five","six","seven","eight","nine"]
+    end
+=end
+
+    def in_words
+        @zero_to_nine = ["zero","one","two","three","four","five","six","seven","eight","nine"]
+        @zero_to_nine = Hash[(0..@zero_to_nine.length).zip @zero_to_nine]
+
+        @ten_to_nineteen = {10=>"ten",11=>"eleven",12=>"twelve",13=>"thirteen",14=>"fourteen",15=>"fifteen",16=>"sixteen",17=>"seventeen",18=>"eighteen",19=>"nineteen"}
+        #@eleven_to_nineteen = Hash[(0..@eleven_to_nineteen.length) @eleven_to_nineteen]
+
+        @tens = {10=>"ten",20=>"twenty",30=>"thirty",40=>"forty",50=>"fifty",60=>"sixty",70=>"seventy",80=>"eighty",90=>"ninety"}
+
+        case self
+        when 0..9
+            return @zero_to_nine[self]
+        when 10..19
+            return @ten_to_nineteen[self]
+        when 20..99
+            tens = self / 10 * 10
+            ones = self % 10
+            return "#{@tens[tens]}#{ones == 0 ? '' : ' ' + @zero_to_nine[ones]}"
+        when 100..999
+            hundreds = self / 100
+            tens = (self - hundreds * 100) / 10 * 10
+            ones = self % 10
+            if @ten_to_nineteen.include?(self - hundreds * 100)
+                return "#{zero_to_nine[hundreds]} hundred " +
+                    "#{@ten_to_nineteen[self - hundreds * 100]}"
+            else
+                return "#{zero_to_nine[hundreds]} hundred" +
+                    "#{tens == 0 ? '' : ' ' +  @tens[tens]}" +
+                    "#{ones == 0 ? '' : ' ' + @zero_to_nine[ones]}"
+            end
+        when 1000..999999
+            thousands = self / 1000
+            hundreds = (self - thousands * 1000) / 100
+            tens = (self - (thousands * 1000 + hundreds * 100)) / 10 * 10
+            ones = self % 10
+            if @ten_to_nineteen.include?(self - (thousands * 1000 + hundreds * 100))
+                return "#{zero_to_nine[thousands]} thousand" +
+                    "#{hundreds == 0 ? '' : ' ' + @zero_to_nine[hundreds]}" +
+                    "#{@ten_to_nineteen[self - (thousands * 1000 + hundreds * 100)]}"
+            else
+                if thousands < 10
+                    return "#{zero_to_nine[thousands]} thousand" +
+                    "#{hundreds == 0 ? '' : ' ' + @zero_to_nine[hundreds] + 'hundred'}" +
+                    "#{tens == 0 ? '' : ' ' + @tens[tens]}" +
+                    "#{ones == 0 ? '' : ' ' + @zero_to_nine[ones]}"
+                elsif thousands > 10 && thousands < 100  
+                    return "#{@tens[thousands / 10 * 10]}#{ones == 0 ? '' : ' ' + @zero_to_nine[thousands % 10]} thousand" +
+                    "#{hundreds == 0 ? '' : ' ' + @zero_to_nine[hundreds] + ' hundred'}" +
+                    "#{tens == 0 ? '' : ' ' + @tens[tens]}" +
+                    "#{ones == 0 ? '' : ' ' + @zero_to_nine[ones]}"
+                elsif thousands > 100  
+                    return "#{@zero_to_nine[thousands / 100] + ' hundred'}" + "#{(thousands / 10 * 10) == 0 ? "" : @tens[thousands / 10 * 10]}#{ones == 0 ? '' : ' ' + @zero_to_nine[thousands % 10]} thousand" +
+                    "#{hundreds == 0 ? '' : ' ' + @zero_to_nine[hundreds] + ' hundred'}" +
+                    "#{tens == 0 ? '' : ' ' + @tens[tens]}" +
+                    "#{ones == 0 ? '' : ' ' + @zero_to_nine[ones]}"
+                end
+            end
+        when 1_000_000..999_999_999
+            
+        end
+    end
+
+    puts self.inspect + " class has been loaded..."
+end

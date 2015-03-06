@@ -1,0 +1,208 @@
+class XmlDocument
+# TODO: Features I'd like to implement
+#   > allow for multiple tag entries when nesting
+#   > turn attributes to strings before insertion
+
+    attr_reader :hellos
+
+    def initialize(indent=false)#, indent_depth=0)
+        self.indents = indents
+        self.indent_depth = 0
+=begin
+        @indent = indent
+        if indent 
+            @indent_depth = 1 
+        else 
+            @indent_depth = 0
+        end
+=end
+    end
+
+    def send(tag)
+        return "<#{tag}/>"
+    end
+    
+    def method_missing(tag, *attributes, &block)#={}) #*attributes, &block)
+        #convert attributes hash to string
+        #attrs = {}
+        attrs = []
+        attributes.map!{|k, v| 
+            "#{k}='#{v}'"
+        }
+        attrs << attributes.last
+
+        if block_given?
+            #need indentations as conditional string additions
+
+            #opening tag
+            opening_tag = (" " * indent_depth.to_i) + (attrs.length == 0 ? "<#{tag} #{attrs[0]}>" : "<#{tag}>") + (self.indents ? "\n" : "")
+
+            #block.call / contents
+            self.indent_depth += 1
+            contents = yield
+            self.indent_depth -= 1
+
+            #closing tag
+            closing_tag = (" " * indent_depth) + ("</#{tag}>") + (self.indents ? "\n" : "")
+
+            [opening_tag,contents,closing_tag].join
+        else
+            (" " * indent_depth) + (attrs.length == 0 ? "<#{tag}/>" : "<#{tag} #{attrs[0]}>") + (self.indents ? "\n" : "") 
+        end
+
+=begin ---INDENT ATTEMPT #1---
+        #this = XmlDocument.new
+        #indentation = " " * indent_depth
+
+        tag_name = tag.to_s
+#        attrs = (attributes.last || {}).map{}#an array of attributes 
+
+#=begin
+        attrs = {}
+        attributes.each {|attr|
+        case attr
+            when Hash then attrs.merge!(attr) 
+        end
+        }#.map{|k, v| "#{k}='#{v}'"}
+#=end
+
+        if block_given?
+        content = yield
+            if self.indents == true
+                if content.class == String && !attributes.empty?
+                    puts "block_given && attributes"
+                    "#{" " * indent_depth}<#{tag_name} #{attrs.keys[0]}='#{attrs.values[0]}'>\n" #+ (self.indents ? "\n" : "")
+                    self.indent_depth += 1
+                    yield#(XmlDocument.new(true)) 
+                    self.indent_depth -= 1
+                    "\n#{" " * indent_depth}</#{tag_name}>"
+                elsif content.class == String && attributes.empty?
+                    puts "block_given && no attributes"
+                    "#{indentation}<#{tag_name}>\n" +
+                    yield#(XmlDocument.new(true))}" + 
+                    "\n#{indentation}</#{tag_name}>"
+                end
+            else
+                if content.class == String && !attributes.empty?
+                    puts "!block_given && attributes"
+                    "<#{tag_name} #{attrs.keys[0]}='#{attrs.values[0]}'>" +
+                    "#{yield}" + 
+                    "</#{tag_name}>"
+                elsif content.class == String && attributes.empty?
+                    puts "!block_given && !attributes"
+                    "<#{tag_name}>" +
+                    "#{yield}" + 
+                    "</#{tag_name}>"
+                end
+            end
+        elsif attributes.empty?  
+            return send("#{tag_name}")  
+        else # attributes NOT empty && NO_BLOCK
+            return send("#{tag_name} #{attrs.keys[0]}='#{attrs.values[0]}'")
+        end
+=end
+
+
+=begin ---NO INDENT---
+        if block_given?
+            content = yield #block.call
+            if content.class == String && !attributes.empty?
+                "<#{tag_name} #{attrs.keys[0]}='#{attrs.values[0]}'>\n" +
+                    "#{yield(this(indent_depth + 1))}" + 
+                    "</#{tag_name}>\n"
+            elsif content.class == String && attributes.empty?
+                return "<#{tag_name}>#{content}</#{tag_name}>"#method_missing(content)
+            end
+        elsif attributes.empty?  
+            return send("#{tag_name}")  
+        else
+            return send("#{tag_name} #{attrs.keys[0]}='#{attrs.values[0]}'")
+        end
+=end
+
+=begin
+        return send"#{tag_name} #{@attributes.to_a.last.first}='#{@attributes.to_a.last.last}'/>" unless attribute.empty?
+        return send("#{tag_name}")  
+=end
+    end
+
+
+
+
+
+=begin 
+    def hello(*attribute)
+
+        attribute.each {|attr|
+        case attr
+            when Hash then @attributes.merge!(attr) 
+            #when String then return "<hello>#{attr}</hello>"
+        end
+        }
+
+        if block_given?
+            return "<hello>#{yield}</hello>" #return "<hello></hello>" 
+        end 
+
+        return "<hello #{@attributes.to_a.last.first}='#{@attributes.to_a.last.last}'/>" unless attribute.empty?
+        return "<hello/>"  
+    end
+
+    def goodbye(*attribute)
+        attribute.each {|attr|
+        case attr
+            when Hash then @attributes.merge!(attr) 
+        end
+        }
+
+        if block_given?
+            return "<goodbye>#{yield}</goodbye>" 
+        elsif !attribute.empty?
+            return "<goodbye #{@attributes.to_a.last.first}='#{@attributes.to_a.last.last}'/>"
+        else
+            send("goodbye")
+        end 
+    end
+
+    def come_back(*attribute)
+        attribute.each {|attr|
+        case attr
+            when Hash then @attributes.merge!(attr) 
+        end
+        }
+
+        if block_given?
+            return "<come_back>#{yield}</come_back>"
+        elsif !attribute.empty?
+            return "<come_back #{@attributes.to_a.last.first}='#{@attributes.to_a.last.last}'/>"
+        else
+            send("come_back")
+        end 
+    end
+    
+    def ok_fine(*attribute)
+        attribute.each {|attr|
+        case attr
+            when Hash then @attributes.merge!(attr) 
+        end
+        }
+
+        if block_given?
+            return "<ok_fine>#{yield}</ok_fine>"
+        elsif !attribute.empty?
+            return "<ok_fine #{@attributes.to_a.last.first}='#{@attributes.to_a.last.last}'/>"
+        else
+            send("ok_fine")
+        end 
+    end
+=end
+
+    puts self.inspect + " class has been loaded..."
+end
+
+#xml = XmlDocument.new(true)
+#print xml.hello{"world!"}
+#print "\n"
+#print xml.hello{xml.goodbye{"world!"}}
+#print "\n"
+#print xml.hello{xml.goodbye{xml.come_back{xml.ok_fine(:be=>"that_way")}}}
